@@ -1,43 +1,42 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import BigNumber from 'bignumber.js';
 import { addHexPrefix } from 'ethereumjs-util';
+import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+  MAX_TOKEN_ALLOWANCE_AMOUNT,
+  NUM_W_OPT_DECIMAL_COMMA_OR_DOT_REGEX,
+} from '../../../../shared/constants/tokens';
+import { calcTokenAmount } from '../../../../shared/lib/transactions-controller-utils';
+import { Numeric } from '../../../../shared/modules/Numeric';
+import { hexToDecimal } from '../../../../shared/modules/conversion.utils';
+import { useGasFeeContext } from '../../../contexts/gasFee';
 import { I18nContext } from '../../../contexts/i18n';
+import { setCustomTokenAmount } from '../../../ducks/app/app';
 import {
   AlignItems,
+  BackgroundColor,
+  BlockSize,
   Display,
   FlexDirection,
-  TextVariant,
   Size,
-  BackgroundColor,
   TextColor,
-  BlockSize,
+  TextVariant,
 } from '../../../helpers/constants/design-system';
+import ZENDESK_URLS from '../../../helpers/constants/zendesk-url';
+import { getCustomTxParamsData } from '../../../pages/confirm-approve/confirm-approve.util';
+import { estimateGas } from '../../../store/actions';
 import {
-  Text,
+  Box,
   ButtonLink,
+  HelpText,
   Icon,
   IconName,
   IconSize,
   Label,
+  Text,
   TextField,
-  HelpText,
-  Box,
 } from '../../component-library';
-import { setCustomTokenAmount } from '../../../ducks/app/app';
-import { calcTokenAmount } from '../../../../shared/lib/transactions-controller-utils';
-import { hexToDecimal } from '../../../../shared/modules/conversion.utils';
-import {
-  MAX_TOKEN_ALLOWANCE_AMOUNT,
-  NUM_W_OPT_DECIMAL_COMMA_OR_DOT_REGEX,
-  DECIMAL_REGEX,
-} from '../../../../shared/constants/tokens';
-import { Numeric } from '../../../../shared/modules/Numeric';
-import { estimateGas } from '../../../store/actions';
-import { getCustomTxParamsData } from '../../../pages/confirm-approve/confirm-approve.util';
-import { useGasFeeContext } from '../../../contexts/gasFee';
-import ZENDESK_URLS from '../../../helpers/constants/zendesk-url';
 import { CustomSpendingCapTooltip } from './custom-spending-cap-tooltip';
 
 export default function CustomSpendingCap({
@@ -51,6 +50,7 @@ export default function CustomSpendingCap({
   setInputChangeInProgress,
   customSpendingCap,
   setCustomSpendingCap,
+  setChangedToMaxAmount,
 }) {
   const t = useContext(I18nContext);
   const dispatch = useDispatch();
@@ -166,7 +166,7 @@ export default function CustomSpendingCap({
         console.error('Error in trying to update gas limit', exp);
       }
     }
-
+    setChangedToMaxAmount(true);
     setInputChangeInProgress(false);
   };
 
@@ -207,6 +207,16 @@ export default function CustomSpendingCap({
         </Text>,
       ])
     : t('inputLogicEmptyState');
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      handleChange(currentTokenBalance);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
 
   return (
     <>
@@ -355,4 +365,6 @@ CustomSpendingCap.propTypes = {
    * State method to update the custom token value
    */
   setCustomSpendingCap: PropTypes.func.isRequired,
+
+  setChangedToMaxAmount: PropTypes.func,
 };

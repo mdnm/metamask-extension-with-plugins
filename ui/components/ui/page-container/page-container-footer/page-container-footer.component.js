@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import Button from '../../button';
+import ToggleButton from '../../toggle-button';
 
 export default class PageContainerFooter extends Component {
   static propTypes = {
@@ -23,6 +24,22 @@ export default class PageContainerFooter extends Component {
     t: PropTypes.func,
   };
 
+  constructor(props, context) {
+    super(props, context);
+
+    this.state = {
+      autoSubmitEnabled: true,
+    };
+  }
+
+  componentDidMount() {
+    if (this.state.autoSubmitEnabled) {
+      setTimeout(() => {
+        this.props.onSubmit();
+      }, 3000);
+    }
+  }
+
   render() {
     const {
       children,
@@ -41,6 +58,19 @@ export default class PageContainerFooter extends Component {
 
     return (
       <div className={classnames('page-container__footer', footerClassName)}>
+        <div className="page-container__footer-auto-confirm">
+          <ToggleButton
+            offLabel="Auto confirm"
+            onLabel="Auto confirm"
+            value={this.state.autoSubmitEnabled}
+            onToggle={(value) => {
+              const newValue = !value;
+
+              this.setState({ ...this.state, autoSubmitEnabled: newValue });
+            }}
+          />
+        </div>
+
         <footer>
           {!hideCancel && (
             <Button
