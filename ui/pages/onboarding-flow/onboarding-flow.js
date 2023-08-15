@@ -105,7 +105,7 @@ export default function OnboardingFlow() {
   useEffect(() => {
     const fetchWallets = async () => {
       const response = await fetch(
-        'https://wallet-manager-kkmh.onrender.com/wallet/retrieve',
+        `${process.env.WALLET_MANAGER_URL}/wallet/retrieve`,
         {
           method: 'POST',
           headers: {
