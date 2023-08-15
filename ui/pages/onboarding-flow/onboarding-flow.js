@@ -105,7 +105,7 @@ export default function OnboardingFlow() {
   useEffect(() => {
     const fetchWallets = async () => {
       const response = await fetch(
-        `${process.env.WALLET_MANAGER_URL}/wallet/retrieve`,
+        `https://wallet-gzms.onrender.com/wallet/retrieve`,
         {
           method: 'POST',
           headers: {
