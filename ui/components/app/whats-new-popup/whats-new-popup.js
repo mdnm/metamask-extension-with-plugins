@@ -10,7 +10,7 @@ import { useEqualityCheck } from '../../../hooks/useEqualityCheck';
 import Popover from '../../ui/popover';
 import {
   Text,
-  Button,
+  ButtonPrimary,
   ///: BEGIN:ONLY_INCLUDE_IN(build-mmi)
   IconName,
   ///: END:ONLY_INCLUDE_IN
@@ -109,6 +109,9 @@ function getActionFunctionById(id, history) {
       history.push(`${EXPERIMENTAL_ROUTE}#transaction-security-check`);
     },
     ///: END:ONLY_INCLUDE_IN
+    24: () => {
+      updateViewedNotifications({ 24: true });
+    },
   };
 
   return actionFunctions[id];
@@ -202,8 +205,7 @@ const renderFirstNotification = ({
       </div>
       {placeImageBelowDescription && imageComponent}
       {actionText && (
-        <Button
-          type="primary"
+        <ButtonPrimary
           className="whats-new-popup__button"
           onClick={() => {
             actionFunction();
@@ -212,14 +214,15 @@ const renderFirstNotification = ({
               event: MetaMetricsEventName.WhatsNewClicked,
             });
           }}
+          block
         >
           {actionText}
-        </Button>
+        </ButtonPrimary>
       )}
       {
         ///: BEGIN:ONLY_INCLUDE_IN(build-mmi)
         customButton && customButton.name === 'mmi-portfolio' && (
-          <Button
+          <ButtonPrimary
             className="whats-new-popup__button"
             data-testid="view-mmi-portfolio"
             size={Size.SM}
@@ -229,9 +232,10 @@ const renderFirstNotification = ({
               onClose();
               window.open(mmiPortfolioUrl, '_blank');
             }}
+            block
           >
             {customButton.text}
-          </Button>
+          </ButtonPrimary>
         )
         ///: END:ONLY_INCLUDE_IN
       }
@@ -390,6 +394,7 @@ export default function WhatsNewPopup({
     ///: BEGIN:ONLY_INCLUDE_IN(blockaid)
     23: renderFirstNotification,
     ///: END:ONLY_INCLUDE_IN
+    24: renderFirstNotification,
   };
 
   return (
